@@ -49,8 +49,8 @@ var adminclients = require('./routes/adminclients');
 var teachers = require('./routes/teachers');
 common = require('./routes/common');
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
+// var routes = require('./routes/index');
+// var users = require('./routes/users');
 
 var app = express();
 
