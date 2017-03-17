@@ -276,6 +276,14 @@ exports.clientidentity = function (req, res) {
                 });
             });
             break;
+        case 'student':
+            parameter = identity;
+            db.collection('schoolstudentcollection', function (err, collection) {
+                collection.find({ username: parameter, "schoolstudent.suspended": false }).toArray(function (err, items) {
+                    res.send(items);
+                });
+            });
+            break;
     }
 
 };
