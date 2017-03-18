@@ -25,7 +25,9 @@ Server = mongo.Server,
     ObjectID = mongo.ObjectID;
 Binary = mongo.Binary;
 //put in environmental variable
-url = 'mongodb://jideboris:computer123@ds033096.mlab.com:33096/evaluatordb';
+//process.env.NODE_MONGODB = 'mongodb://jideboris:computer123@ds033096.mlab.com:33096/evaluatordb';
+//set NODE_MONGODB=mongodb://jideboris:computer123@ds033096.mlab.com:33096/evaluatordb
+url = process.env.NODE_MONGODB;//'mongodb://jideboris:computer123@ds033096.mlab.com:33096/evaluatordb';
 // Use connect method to connect to the Server
 MongoClient.connect(url, function (err, database) {
 
@@ -37,18 +39,19 @@ MongoClient.connect(url, function (err, database) {
         // do some work here with the database.
 
         //Close connection
-       // db.close();
+        // db.close();
     }
 });
 
 
+var students = require('./routes/students');
 var edata = require('./routes/edata');
 var equestion = require('./routes/questions');
 var clients = require('./routes/clients');
 var adminclients = require('./routes/adminclients');
 var teachers = require('./routes/teachers');
 common = require('./routes/common');
- 
+
 
 var app = express();
 
@@ -67,10 +70,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use(cors());
- 
+
 app.use(express.static(path.join(__dirname, 'public')));
 
-
+//stdent
+app.get('/studentregsubjects/:authdata', students.getstudentregisteredsubjects);
 
 app.get('/subjecttopics/:selectedsubject', edata.getsubjecttopics);
 app.get('/topics/:level1/:level2/', edata.findAllTopics);
