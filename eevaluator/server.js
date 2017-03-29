@@ -130,7 +130,7 @@ app.get('/submit/:mail/:passcode/:schoolname/:username/:license', common.sendema
 app.get('/schoolstudentsdisciplinerecords/:level/:authdata', clients.getschoolstudentsdisciplinerecords);
 app.get('/schoolstudentsdisciplinerecord/:disciplinerecordid/:authdata', clients.getschoolstudentsdisciplinerecord);
 app.post('/disciplinetostudentrecord', clients.adddisciplinetostudentrecord);
-app.post('/addclientstudent/:authdata', clients.addclientstudent);
+app.post('/addclientstudent', clients.addclientstudent);
 app.put('/updateclientstudent/:id/:authdata', clients.updateclientstudent);
 app.delete('/deleteclientstudent/:id/:authdata', clients.deleteclientstudent);
 app.delete('/deleteclientteacher/:id/:authdata', clients.deleteclientteacher);

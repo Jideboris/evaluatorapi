@@ -284,6 +284,15 @@ exports.clientidentity = function (req, res) {
                 });
             });
             break;
+        case 'parent':
+            parameter = identity;
+            console.log(parameter);
+            db.collection('schoolstudentcollection', function (err, collection) {
+                collection.find({ parentusername: parameter, "schoolstudent.suspended": false }).toArray(function (err, items) {
+                    res.send(items);
+                });
+            });
+            break;
     }
 
 };

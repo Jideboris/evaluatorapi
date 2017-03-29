@@ -29,7 +29,7 @@ exports.deleteclientstudent = function (req, res) {
 exports.getschoolstudentsdisciplinerecord = function (req, res) {
   var raw = req.params.authdata;
   var disciplinerecordid = req.params.disciplinerecordid;
- 
+
   var decoded = common.decode(raw);
 
   var identity = decoded.split(':')[0];
@@ -39,7 +39,7 @@ exports.getschoolstudentsdisciplinerecord = function (req, res) {
       if (items != '') {
         var clientid = items[0]._id
         db.collection('studentdisciplinerecord', function (err, collection) {
-          collection.find({_id: new ObjectID(disciplinerecordid) ,schoolid: new ObjectID(clientid) }).toArray(function (err, result) {
+          collection.find({ _id: new ObjectID(disciplinerecordid), schoolid: new ObjectID(clientid) }).toArray(function (err, result) {
             if (err) {
               res.send({ 'error': 'An error has occurred' });
             } else {
@@ -67,7 +67,7 @@ exports.getschoolstudentsdisciplinerecords = function (req, res) {
       if (items != '') {
         var clientid = items[0]._id
         db.collection('studentdisciplinerecord', function (err, collection) {
-          collection.find({level:level, schoolid: new ObjectID(clientid) }).toArray(function (err, result) {
+          collection.find({ level: level, schoolid: new ObjectID(clientid) }).toArray(function (err, result) {
             if (err) {
               res.send({ 'error': 'An error has occurred' });
             } else {
@@ -276,42 +276,68 @@ exports.addteacherschoolclient = function (req, res) {
 };
 
 exports.addclientstudent = function (req, res) {
-  var dateadded = common.gettodaydate();
-  var schoolstudent = req.body;
+  var form = new formidable.IncomingForm();
+  form.parse(req, function (err, fields) {
+    var dateadded = common.gettodaydate();
+    var raw = fields.authdata;
+    var username = fields.fullname.replace(/ /g, "");
+    var dateofbirth = fields.dateofbirth;
+    var personalemail = fields.personalemail;
+    var parentemail = fields.parentemail;
+    var fullname = fields.fullname;
+    var selectedlevel = fields.selectedlevel;
+    var parentnumber = fields.parentnumber;
+    var studentregisteredsubjects = fields.studentregisteredsubjects;
+    var decoded = common.decode(raw);
 
-  var raw = req.params.authdata;
-  var decoded = common.decode(raw);
+    var identity = decoded.split(':')[0];
+    var password = decoded.split(':')[1];
 
-  var identity = decoded.split(':')[0];
-  var password = decoded.split(':')[1];
-  var username = schoolstudent.fullname.replace(/ /g, "");
-  var item = username + schoolstudent.dateofbirth + schoolstudent.personalemail;
-  var studentpassword = common.makeid(item.toUpperCase());
-  db.collection('schoolcollection', function (err, collection) {
-    collection.find({ regnumber: identity, schoolpasscode: password }).toArray(function (err, items) {
-      if (items != '') {
-        var clientid = items[0]._id
-        db.collection('schoolstudentcollection', function (err, collection) {
-          collection.insert({
-            schoolstudent: schoolstudent,
-            schoolid: clientid,
-            username: username,
-            password: studentpassword,
-            dateadded: dateadded
 
-          }, { safe: true }, function (err, result) {
-            if (err) {
-              res.send({ 'error': 'An error has occurred' });
-            } else {
-              res.send(JSON.stringify(result));
-            }
+    var item = username + dateofbirth + personalemail;
+    var studentpassword = common.makeid(item.toUpperCase());
+    var parentusername = parentemail;
+    var parentpassword = common.makeid(parentusername.toUpperCase());
+
+
+    db.collection('schoolcollection', function (err, collection) {
+      collection.find({ regnumber: identity, schoolpasscode: password }).toArray(function (err, items) {
+        if (items != '') {
+          var clientid = items[0]._id
+          db.collection('schoolstudentcollection', function (err, collection) {
+            collection.insert({
+              schoolstudent: {
+                fullname: fullname,
+                dateofbirth: dateofbirth,
+                selectedlevel: selectedlevel,
+                personalemail: personalemail,
+                parentemail: parentemail,
+                parentnumber: parentnumber,
+                studentregisteredsubjects: studentregisteredsubjects,
+                suspended: false
+              },
+              schoolid: clientid,
+              username: username,
+              password: studentpassword,
+              parentusername: parentusername,
+              parentpassword: parentpassword,
+              dateadded: dateadded
+
+            }, { safe: true }, function (err, result) {
+              if (err) {
+                res.send({ 'error': 'An error has occurred' });
+              } else {
+                res.send(JSON.stringify(result));
+              }
+            });
           });
-        });
-      }
+        }
+      });
     });
-  });
 
+  })
 };
+
 exports.getteacherstudentsby = function (req, res) {
   var raw = req.params.authdata;
   var id = req.params.id;
