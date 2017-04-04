@@ -1003,7 +1003,7 @@ exports.getteachingmethods = function (req, res) {
     var raw = req.params.authdata;
     var selectedlevel = req.params.selectedlevel;
     var selectedsubject = req.params.selectedsubject;
-    
+
     var level = selectedlevel.replace('-', '/');
     var decoded = common.decode(raw);
     var identity = decoded.split(':')[0];
@@ -1466,6 +1466,77 @@ exports.addteachersuggestion = function (req, res) {
     })
 
 };
+exports.addtodaynewsletters = function (req, res) {
+    var form = new formidable.IncomingForm();
+    form.parse(req, function (err, fields, files) {
+        var file = files.file;
+        var fsiz = file.size;
+        var tempPath = file.path;
+        console.log(tempPath);
+
+        var title = fields.title;
+        var message = fields.message;
+        var level = fields.level;
+        var authdata = fields.authdata;
+
+        var decoded = common.decode(authdata);
+        var identity = decoded.split(':')[0];
+        var password = decoded.split(':')[1];
+        var dateadded = common.gettodaydate();
+
+        var targetPath = path.resolve('./public/images/' + file.name);
+        db.collection('schoolteachercollection', function (err, collection) {
+            collection.find({ username: identity, password: password }).toArray(function (err, result) {
+                if (err) {
+                    res.send('teacher not found!!');
+                } else if (result[0] != '' && typeof (result[0] != 'undefined')) {
+                    fs.rename(tempPath, targetPath, function (err) {
+                        if (err) {
+                            throw err
+                        }
+                        else {
+                            var data = fs.readFileSync(targetPath);
+                            var image = new Binary(data);
+                            var imageType = file.type;
+                            var imageName = file.name;
+                            fs.unlink(targetPath);
+                            db.collection('schoolteachernewsletterscollection', function (err, collection) {
+                                console.log(imageType);
+                                console.log(imageName);
+                                console.log(fsiz);
+                                console.log(message);
+                                collection.insert(
+                                    {
+                                        teacherid: result[0]._id,
+                                        title: title,
+                                        level: level,
+                                        message: message,
+                                        dateadded: dateadded,
+                                        imageType: imageType,
+                                        filename: imagename,
+                                        filesize: fsiz,
+                                        image: image
+                                    }, { safe: true }, function (err, result) {
+                                        if (err) {
+                                            res.send({ 'error': 'An error has occurred' });
+                                        }
+                                        else {
+                                            collection.find({ dateadded: dateadded }).toArray(function (err, output) {
+                                                res.send(output);
+                                            })
+                                        }
+                                    });
+                            });
+
+
+                        }
+                    });
+                }
+            });
+
+        });
+    })
+};
 exports.addtodayteachersubjectassignment = function (req, res) {
     var form = new formidable.IncomingForm();
     form.parse(req, function (err, fields, files) {
@@ -1514,7 +1585,6 @@ exports.addtodayteachersubjectassignment = function (req, res) {
                                         level: level,
                                         attendance: attendance,
                                         assignmentdescription: assignmentdescription,
-                                        dateadded: dateadded,
                                         imagetype: imageType,
                                         image: image,
                                         filename: imageName,
