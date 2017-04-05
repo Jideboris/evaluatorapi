@@ -1466,13 +1466,40 @@ exports.addteachersuggestion = function (req, res) {
     })
 
 };
+exports.gettodaynewsletters = function (req, res) {
+    var raw = req.params.authdata;
+    var level = req.params.level;
+    var dateadded = common.gettodaydate();
+    var decoded = common.decode(raw);
+    var identity = decoded.split(':')[0];
+    var password = decoded.split(':')[1];
+
+    db.collection('schoolteachercollection', function (err, collection) {
+        collection.find({ username: identity, password: password }).toArray(function (err, teacherresult) {
+            if (err) {
+                res.send('teacher not found!!');
+            } else if (teacherresult[0] != '' && typeof (teacherresult[0] != 'undefined')) {
+                db.collection('schoolteachernewsletterscollection', function (err, collection) {
+                    collection.find({
+                        teacherid: new ObjectID(teacherresult[0]._id), level: level, dateadded: dateadded
+                    }).toArray(function (err, result) {
+                        if (err) {
+                            res.send({ 'error': 'An error has occurred' });
+                        } else {
+                            res.send(JSON.stringify(result));
+                        }
+                    });
+                })
+            }
+        })
+    })
+}
 exports.addtodaynewsletters = function (req, res) {
     var form = new formidable.IncomingForm();
     form.parse(req, function (err, fields, files) {
         var file = files.file;
         var fsiz = file.size;
         var tempPath = file.path;
-        console.log(tempPath);
 
         var title = fields.title;
         var message = fields.message;
@@ -1501,10 +1528,6 @@ exports.addtodaynewsletters = function (req, res) {
                             var imageName = file.name;
                             fs.unlink(targetPath);
                             db.collection('schoolteachernewsletterscollection', function (err, collection) {
-                                console.log(imageType);
-                                console.log(imageName);
-                                console.log(fsiz);
-                                console.log(message);
                                 collection.insert(
                                     {
                                         teacherid: result[0]._id,
@@ -1513,11 +1536,12 @@ exports.addtodaynewsletters = function (req, res) {
                                         message: message,
                                         dateadded: dateadded,
                                         imageType: imageType,
-                                        filename: imagename,
+                                        filename: imageName,
                                         filesize: fsiz,
                                         image: image
                                     }, { safe: true }, function (err, result) {
                                         if (err) {
+                                            consol.log(err);
                                             res.send({ 'error': 'An error has occurred' });
                                         }
                                         else {
@@ -1543,7 +1567,7 @@ exports.addtodayteachersubjectassignment = function (req, res) {
         var file = files.file;
         var fsiz = file.size;
         var tempPath = file.path;
-
+        console.log(tempPath);
         var attendance = fields.attendance;
         var subject = fields.subject;
         var level = fields.level;
