@@ -182,6 +182,8 @@ app.get('/retrieveteacherquestions/:selecteddate/:selectedlevel/:selectedsubject
 
 app.get('/retrieveteachingmethod/:selectedlevel/:selectedsubject/:authdata', teachers.getteachingmethods);
 
+
+app.get('/retrievenewslettersbydate/:date/:authdata', teachers.getnewslettersbydate);
 app.get('/retrieveteachertodaynewsletters/:level/:authdata', teachers.gettodaynewsletters);
 app.post('/uploadnewsletter', teachers.addtodaynewsletters);
 app.post('/uploadassignment', teachers.addtodayteachersubjectassignment);
