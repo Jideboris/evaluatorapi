@@ -27,7 +27,7 @@ Binary = mongo.Binary;
 //put in environmental variable
 //process.env.NODE_MONGODB = 'mongodb://jideboris:computer123@ds033096.mlab.com:33096/evaluatordb';
 //set NODE_MONGODB=mongodb://jideboris:computer123@ds033096.mlab.com:33096/evaluatordb
-url = process.env.NODE_MONGODB; 
+url ="mongodb://jideboris:computer123@ds033096.mlab.com:33096/evaluatordb";// process.env.NODE_MONGODB; 
 // Use connect method to connect to the Server
 MongoClient.connect(url, function (err, database) {
 
