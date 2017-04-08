@@ -1469,9 +1469,10 @@ exports.addteachersuggestion = function (req, res) {
 exports.getnewslettersbydate = function (req, res) {
     var raw = req.params.authdata;
     var date = req.params.date;
-    console.log(date);
+    var level = req.params.level;
+
     var dateadded = date.replace(/-/g, '/');
-    console.log(dateadded);
+
     var decoded = common.decode(raw);
     var identity = decoded.split(':')[0];
     var password = decoded.split(':')[1];
@@ -1483,7 +1484,7 @@ exports.getnewslettersbydate = function (req, res) {
             } else if (teacherresult[0] != '' && typeof (teacherresult[0] != 'undefined')) {
                 db.collection('schoolteachernewsletterscollection', function (err, collection) {
                     collection.find({
-                        teacherid: new ObjectID(teacherresult[0]._id), dateadded: dateadded
+                        teacherid: new ObjectID(teacherresult[0]._id), dateadded: dateadded, level: level
                     }).toArray(function (err, result) {
                         if (err) {
                             res.send({ 'error': 'An error has occurred' });
