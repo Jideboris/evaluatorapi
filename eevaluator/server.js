@@ -198,5 +198,7 @@ app.post('/retrieveassignmentsscores', teachers.getassignmentsscores);
 app.post('/addquestionfromteacher', teachers.savequestionfromteacher);
 app.post('/teachingmethod', teachers.saveteachingmethod);
 app.get('/assignmentdetails/:selectedlevel/:selectedsubject/:description/:authdata', teachers.checkassignmentdescription);
-app.listen(3000);
+
+app.listen(process.env.PORT || 3000)
+//app.listen(3000);
 console.log('Listening on port 3000...');
