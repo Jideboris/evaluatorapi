@@ -1497,6 +1497,48 @@ exports.getnewslettersbydate = function (req, res) {
         })
     })
 }
+exports.getnewsletter = function (req, res) {
+    try {
+        var raw = req.params.authdata;
+        var level = req.params.level;
+        var newsid = req.params.newsid;
+        var dateadded = common.gettodaydate();
+        var decoded = common.decode(raw);
+        var identity = decoded.split(':')[0];
+        var password = decoded.split(':')[1];
+
+        db.collection('schoolteachercollection', function (err, collection) {
+            collection.find({ username: identity, password: password }).toArray(function (err, teacherresult) {
+                if (err) {
+                    res.send('teacher not found!!');
+                } else if (teacherresult[0] != '' && typeof (teacherresult[0] != 'undefined')) {
+                    db.collection('schoolteachernewsletterscollection', function (err, collection) {
+                        collection.find({
+                            _id: new ObjectID(newsid),
+                            teacherid: new ObjectID(teacherresult[0]._id), level: level
+                        }).toArray(function (err, result) {
+                            if (err) {
+                                res.send({ 'error': 'An error has occurred' });
+                            } else {
+                                var output = {
+                                    imageType: result[0].imageType,
+                                    filename: result[0].filename,
+                                    filesize: result[0].filesize,
+                                    image: result[0].image
+                                }
+                                res.send(output);
+                            }
+                        });
+                    })
+                }
+            })
+        })
+    }
+    catch (err) {
+        res.status(500).send(err);
+    }
+
+}
 exports.gettodaynewsletters = function (req, res) {
     var raw = req.params.authdata;
     var level = req.params.level;
@@ -1572,7 +1614,6 @@ exports.addtodaynewsletters = function (req, res) {
                                         image: image
                                     }, { safe: true }, function (err, result) {
                                         if (err) {
-                                            consol.log(err);
                                             res.send({ 'error': 'An error has occurred' });
                                         }
                                         else {
