@@ -1497,6 +1497,33 @@ exports.getnewslettersbydate = function (req, res) {
         })
     })
 }
+exports.deleteuploadednewsletter = function (req, res) {
+    var id = req.params.id;
+    var dateadded = common.gettodaydate();
+    var raw = req.params.authdata;
+    var decoded = common.decode(raw);
+
+    var identity = decoded.split(':')[0];
+    var password = decoded.split(':')[1];
+
+    db.collection('schoolteachercollection', function (err, collection) {
+        collection.find({ username: identity, password: password }).toArray(function (err, teacherresult) {
+            if (err) {
+                res.send('teacher not found!!');
+            } else if (teacherresult[0] != '' && typeof (teacherresult[0] != 'undefined')) {
+                db.collection('schoolteachernewsletterscollection', function (error, collection) {
+                    collection.remove({ teacherid: new ObjectID(teacherresult[0]._id), _id: new ObjectID(id) });
+                })
+                db.collection('schoolteachernewsletterscollection', function (error, collection) {
+                    collection.find({ teacherid: new ObjectID(teacherresult[0]._id) }).toArray(function (error, output) {
+                        res.send(output);
+                    });
+                })
+            }
+
+        })
+    })
+}
 exports.getnewsletter = function (req, res) {
     try {
         var raw = req.params.authdata;
@@ -1512,21 +1539,36 @@ exports.getnewsletter = function (req, res) {
                 if (err) {
                     res.send('teacher not found!!');
                 } else if (teacherresult[0] != '' && typeof (teacherresult[0] != 'undefined')) {
-                    db.collection('schoolteachernewsletterscollection', function (err, collection) {
+                    db.collection('schoolteachernewsletterscollection', function (error, collection) {
                         collection.find({
                             _id: new ObjectID(newsid),
-                            teacherid: new ObjectID(teacherresult[0]._id), level: level
-                        }).toArray(function (err, result) {
+                            teacherid: new ObjectID(teacherresult[0]._id),
+                            level: level
+                        }).toArray(function (err, resulted) {
                             if (err) {
                                 res.send({ 'error': 'An error has occurred' });
-                            } else {
-                                var output = {
-                                    imageType: result[0].imageType,
-                                    filename: result[0].filename,
-                                    filesize: result[0].filesize,
-                                    image: result[0].image
-                                }
-                                res.send(output);
+                            } else if (resulted != null && typeof (resulted) != 'undefined' && resulted.length > 0) {
+
+                                console.log(resulted[0]);
+                                var targetPath = path.resolve('./public/images/' + resulted[0].filename);
+                                fs.writeFile(targetPath, resulted[0].image.buffer, function (err) {
+                                    if (err) {
+                                        res.send(err);
+                                    }
+                                    // res.writeHead(200, {
+                                    //     'Content-Type': resulted[0].imageType,
+                                    //     'Content-Length': resulted[0].filesize,
+                                    //     'Content-Disposition': resulted[0].filename
+                                    // });
+
+                                    var filestream = fs.createReadStream(targetPath);
+                                    filestream.pipe(res);
+                                    fs.unlink(targetPath);
+
+                                });
+                            }
+                            else {
+                                res.send('No record found');
                             }
                         });
                     })
@@ -1539,6 +1581,47 @@ exports.getnewsletter = function (req, res) {
     }
 
 }
+exports.getnewsletterdetails = function (req, res) {
+    try {
+        var raw = req.params.authdata;
+        var level = req.params.level;
+        var newsid = req.params.newsid;
+        var dateadded = common.gettodaydate();
+        var decoded = common.decode(raw);
+        var identity = decoded.split(':')[0];
+        var password = decoded.split(':')[1];
+
+        db.collection('schoolteachercollection', function (err, collection) {
+            collection.find({ username: identity, password: password }).toArray(function (err, teacherresult) {
+                if (err) {
+                    res.send('teacher not found!!');
+                } else if (teacherresult[0] != '' && typeof (teacherresult[0] != 'undefined')) {
+                    db.collection('schoolteachernewsletterscollection', function (error, collection) {
+                        collection.find({
+                            _id: new ObjectID(newsid),
+                            teacherid: new ObjectID(teacherresult[0]._id),
+                            level: level
+                        }).toArray(function (err, resulted) {
+                            if (err) {
+                                res.send({ 'error': 'An error has occurred' });
+                            } else if (resulted != null && typeof (resulted) != 'undefined' && resulted.length > 0) {
+                                res.send({ filetype: resulted[0].imageType, filename: resulted[0].filename, filesize: resulted[0].filesize })
+                            }
+                            else {
+                                res.send('No record found');
+                            }
+                        });
+                    })
+                }
+            })
+        })
+    }
+    catch (err) {
+        res.status(500).send(err);
+    }
+
+}
+
 exports.gettodaynewsletters = function (req, res) {
     var raw = req.params.authdata;
     var level = req.params.level;
@@ -1596,7 +1679,7 @@ exports.addtodaynewsletters = function (req, res) {
                         }
                         else {
                             var data = fs.readFileSync(targetPath);
-                            var image = new Binary(data);
+                            var image = data;// new Binary(data);
                             var imageType = file.type;
                             var imageName = file.name;
                             fs.unlink(targetPath);
@@ -1633,13 +1716,14 @@ exports.addtodaynewsletters = function (req, res) {
         });
     })
 };
+
 exports.addtodayteachersubjectassignment = function (req, res) {
     var form = new formidable.IncomingForm();
     form.parse(req, function (err, fields, files) {
         var file = files.file;
         var fsiz = file.size;
         var tempPath = file.path;
-        console.log(tempPath);
+
         var attendance = fields.attendance;
         var subject = fields.subject;
         var level = fields.level;

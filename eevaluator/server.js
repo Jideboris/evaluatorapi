@@ -213,8 +213,9 @@ else {
 
     app.get(version + 'retrievenewslettersbydate/:level/:date/:authdata', teachers.getnewslettersbydate);
     app.get(version + 'retrieveteachertodaynewsletters/:level/:authdata', teachers.gettodaynewsletters);
-    app.get(version + 'retrievenewsletter/:level/:newsid/:authdata', teachers.getnewsletter);
-
+    app.post(version + 'retrievenewsletter/:level/:newsid/:authdata', teachers.getnewsletter);
+    app.post(version + 'retrievenewsletterdetails/:level/:newsid/:authdata', teachers.getnewsletterdetails);
+    app.get(version + 'removenewsletter/:id/:authdata', teachers.deleteuploadednewsletter);
 
 
 
