@@ -1671,13 +1671,11 @@ exports.addtodaynewsletters = function (req, res) {
                 if (err) {
                     res.send('teacher not found!!');
                 } else if (result[0] != '' && typeof (result[0] != 'undefined')) {
-                    fs.rename(tempPath, targetPath, function (err) {
-                        if (err) {
-                            throw err
-                        }
+                    mv(tempPath, targetPath, function (err) {
+                        if (err) { throw err; }
                         else {
                             var data = fs.readFileSync(targetPath);
-                            var image =  new Binary(data);
+                            var image = new Binary(data);
                             var imageType = file.type;
                             var imageName = file.name;
                             fs.unlink(targetPath);
@@ -1704,10 +1702,19 @@ exports.addtodaynewsletters = function (req, res) {
                                         }
                                     });
                             });
-
-
                         }
+
                     });
+                    // fs.rename(tempPath, targetPath, function (err) {
+                    //     if (err) {
+                    //         throw err
+                    //     }
+                    //     else {
+
+
+
+                    //     }
+                    // });
                 }
             });
 

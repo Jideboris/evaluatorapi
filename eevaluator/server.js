@@ -10,6 +10,7 @@ var cluster = require('cluster');
 mongo = require('mongodb');
 MongoClient = mongo.MongoClient
 fs = require('fs');
+ mv = require('mv');
 formidable = require('formidable');
 mailer = require("nodemailer");
 Mailgun = require('mailgun-js');
