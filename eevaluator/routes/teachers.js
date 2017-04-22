@@ -1548,8 +1548,6 @@ exports.getnewsletter = function (req, res) {
                             if (err) {
                                 res.send({ 'error': 'An error has occurred' });
                             } else if (resulted != null && typeof (resulted) != 'undefined' && resulted.length > 0) {
-
-                                console.log(resulted[0]);
                                 var targetPath = path.resolve('./images/' + resulted[0].filename);
                                 fs.writeFile(targetPath, resulted[0].image.buffer, function (err) {
                                     if (err) {
