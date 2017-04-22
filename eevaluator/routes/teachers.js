@@ -225,11 +225,11 @@ exports.getanassignment = function (req, res) {
                                 if (err) {
                                     res.send(err);
                                 }
-                                res.writeHead(200, {
-                                    'Content-Type': resulted[0].imagetype,
-                                    'Content-Length': resulted[0].filesize,
-                                    'Content-Disposition': resulted[0].filename
-                                });
+                                // res.writeHead(200, {
+                                //     'Content-Type': resulted[0].imagetype,
+                                //     'Content-Length': resulted[0].filesize,
+                                //     'Content-Disposition': resulted[0].filename
+                                // });
 
                                 var filestream = fs.createReadStream(targetPath);
                                 filestream.pipe(res);
