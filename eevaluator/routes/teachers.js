@@ -125,16 +125,16 @@ exports.getteachingmethodimage = function (req, res) {
                         if (err) {
                             res.send({ 'error': 'An error has occurred' });
                         } else if (resulted != null && typeof (resulted) != 'undefined' && resulted.length > 0) {
-                            var targetPath = path.resolve('./public/images/' + resulted[0].filename);
+                            var targetPath = path.resolve('./images/' + resulted[0].filename);
                             fs.writeFile(targetPath, resulted[0].image.buffer, function (err) {
                                 if (err) {
                                     return res.send(err);
                                 }
-                                res.writeHead(200, {
-                                    'Content-Type': resulted[0].imagetype,
-                                    'Content-Length': resulted[0].filesize,
-                                    'Content-Disposition': resulted[0].filename
-                                });
+                                // res.writeHead(200, {
+                                //     'Content-Type': resulted[0].imagetype,
+                                //     'Content-Length': resulted[0].filesize,
+                                //     'Content-Disposition': resulted[0].filename
+                                // });
 
                                 var filestream = fs.createReadStream(targetPath);
                                 filestream.pipe(res);
@@ -170,16 +170,16 @@ exports.getteacherquestionimage = function (req, res) {
                         if (err) {
                             res.send({ 'error': 'An error has occurred' });
                         } else if (resulted != null && typeof (resulted) != 'undefined' && resulted.length > 0) {
-                            var targetPath = path.resolve('./public/images/' + resulted[0].filename);
+                            var targetPath = path.resolve('./images/' + resulted[0].filename);
                             fs.writeFile(targetPath, resulted[0].image.buffer, function (err) {
                                 if (err) {
                                     return res.send(err);
                                 }
-                                res.writeHead(200, {
-                                    'Content-Type': resulted[0].imagetype,
-                                    'Content-Length': resulted[0].filesize,
-                                    'Content-Disposition': resulted[0].filename
-                                });
+                                // res.writeHead(200, {
+                                //     'Content-Type': resulted[0].imagetype,
+                                //     'Content-Length': resulted[0].filesize,
+                                //     'Content-Disposition': resulted[0].filename
+                                // });
 
                                 var filestream = fs.createReadStream(targetPath);
                                 filestream.pipe(res);
@@ -1142,7 +1142,7 @@ exports.saveteachingmethod = function (req, res) {
             fsiz = file.size;
             tempPath = file.path;
             filename = file.name;
-            targetPath = path.resolve('./public/images/' + filename);
+            targetPath = path.resolve('./images/' + filename);
         }
         var topic = fields.topic;
         var teachingmethodtext = fields.teachingmethodtext;
@@ -1274,7 +1274,7 @@ exports.savequestionfromteacher = function (req, res) {
             fsiz = file.size;
             tempPath = file.path;
             filename = file.name;
-            targetPath = path.resolve('./public/images/' + filename);
+            targetPath = path.resolve('./images/' + filename);
         }
         var topic = fields.topic;
         var question = fields.question;
@@ -1550,7 +1550,7 @@ exports.getnewsletter = function (req, res) {
                             } else if (resulted != null && typeof (resulted) != 'undefined' && resulted.length > 0) {
 
                                 console.log(resulted[0]);
-                                var targetPath = path.resolve('./public/images/' + resulted[0].filename);
+                                var targetPath = path.resolve('./images/' + resulted[0].filename);
                                 fs.writeFile(targetPath, resulted[0].image.buffer, function (err) {
                                     if (err) {
                                         res.send(err);
@@ -1667,7 +1667,7 @@ exports.addtodaynewsletters = function (req, res) {
         var password = decoded.split(':')[1];
         var dateadded = common.gettodaydate();
 
-        var targetPath = path.resolve('./public/images/' + file.name);
+        var targetPath = path.resolve('./images/' + file.name);
         db.collection('schoolteachercollection', function (err, collection) {
             collection.find({ username: identity, password: password }).toArray(function (err, result) {
                 if (err) {
@@ -1679,7 +1679,7 @@ exports.addtodaynewsletters = function (req, res) {
                         }
                         else {
                             var data = fs.readFileSync(targetPath);
-                            var image = data;// new Binary(data);
+                            var image =  new Binary(data);
                             var imageType = file.type;
                             var imageName = file.name;
                             fs.unlink(targetPath);
@@ -1735,7 +1735,7 @@ exports.addtodayteachersubjectassignment = function (req, res) {
         var password = decoded.split(':')[1];
         var dateadded = common.gettodaydate();
 
-        var targetPath = path.resolve('./public/images/' + file.name);
+        var targetPath = path.resolve('./images/' + file.name);
         db.collection('schoolteachercollection', function (err, collection) {
             collection.find({ username: identity, password: password }).toArray(function (err, result) {
                 if (err) {
