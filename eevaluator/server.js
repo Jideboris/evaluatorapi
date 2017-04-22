@@ -17,25 +17,25 @@ mg = require('nodemailer-mailgun-transport');
 nodemailer = require('nodemailer');
 sendgrid = require('sendgrid')('jideboris', 'computer123');
 EmailTemplates = require('email-templates').EmailTemplate;
-if (cluster.isMaster) {
-    // Count the machine's CPUs
-    var cpuCount = require('os').cpus().length;
+// if (cluster.isMaster) {
+//     // Count the machine's CPUs
+//     var cpuCount = require('os').cpus().length;
 
-    // Create a worker for each CPU
-    for (var i = 0; i < cpuCount; i += 1) {
-        cluster.fork();
-    }
-    cluster.on('exit', function (worker) {
+//     // Create a worker for each CPU
+//     for (var i = 0; i < cpuCount; i += 1) {
+//         cluster.fork();
+//     }
+//     cluster.on('exit', function (worker) {
 
-        // Replace the dead worker,
-        // we're not sentimental
-        console.log('Worker %d died :(', worker.id);
-        cluster.fork();
+//         // Replace the dead worker,
+//         // we're not sentimental
+//         console.log('Worker %d died :(', worker.id);
+//         cluster.fork();
 
-    });
+//     });
 
-}
-else {
+// }
+// else {
     Server = mongo.Server,
         connect = mongo.Connect,
         Db = mongo.Db,
@@ -246,4 +246,4 @@ else {
     var server = app.listen(app.get('port'), function () {
         console.log('Express server listening on port ' + server.address().port);
     });
-}
+//}
