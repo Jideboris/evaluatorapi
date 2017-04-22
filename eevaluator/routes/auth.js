@@ -6,7 +6,6 @@ var auth = {
 }
 
 function login(req, res) {
-
     var form = new formidable.IncomingForm();
     form.parse(req, function (err, data) {
 
