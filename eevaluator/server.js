@@ -91,8 +91,8 @@ else {
 
     app.use(cors());
 
-   // app.use(express.static(path.join(__dirname, 'public')));
-    app.use('/public',express.static(path.join(__dirname, 'public')));
+    app.use(express.static(path.join(__dirname, 'public')));
+    
 
     // Auth Middleware - This will check if the token is valid
     // Only the requests that start with /api/v1/* will be checked for the token.

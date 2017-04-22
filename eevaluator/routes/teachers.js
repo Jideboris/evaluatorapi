@@ -220,7 +220,7 @@ exports.getanassignment = function (req, res) {
                             res.send({ 'error': 'An error has occurred' });
                         } else if (resulted != null && typeof (resulted) != 'undefined' && resulted.length > 0) {
 
-                            var targetPath = path.resolve('./public/images/' + resulted[0].filename);
+                            var targetPath = path.resolve('./app/public/images/' + resulted[0].filename);
                             fs.writeFile(targetPath, resulted[0].image.buffer, function (err) {
                                 if (err) {
                                     res.send(err);
