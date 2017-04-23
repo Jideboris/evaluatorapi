@@ -18,7 +18,7 @@ exports.excelbatchprocessing = function (req, res) {
                 if (items != '') {
                     var clientid = items[0]._id
                     console.log(clientid);
-                    fs.rename(tempPath, targetPath, function (err) {
+                    mv(tempPath, targetPath, function (err) {
                         if (err) {
                             console.log(err)
                         }

@@ -1162,7 +1162,7 @@ exports.saveteachingmethod = function (req, res) {
                     res.send('teacher not found!!');
                 } else if (result[0] != '' && typeof (result[0]) != 'undefined') {
                     if (targetPath != '' && tempPath != '') {
-                        fs.rename(tempPath, targetPath, function (err) {
+                        mv(tempPath, targetPath, function (err) {
                             if (err) {
                                 throw err
                             }
@@ -1296,7 +1296,7 @@ exports.savequestionfromteacher = function (req, res) {
                     res.send('teacher not found!!');
                 } else if (result[0] != '' && typeof (result[0]) != 'undefined') {
                     if (targetPath != '' && tempPath != '') {
-                        fs.rename(tempPath, targetPath, function (err) {
+                        mv(tempPath, targetPath, function (err) {
                             if (err) {
                                 throw err
                             }
@@ -1705,16 +1705,6 @@ exports.addtodaynewsletters = function (req, res) {
                         }
 
                     });
-                    // fs.rename(tempPath, targetPath, function (err) {
-                    //     if (err) {
-                    //         throw err
-                    //     }
-                    //     else {
-
-
-
-                    //     }
-                    // });
                 }
             });
 
@@ -1746,7 +1736,7 @@ exports.addtodayteachersubjectassignment = function (req, res) {
                 if (err) {
                     res.send('teacher not found!!');
                 } else if (result[0] != '' && typeof (result[0] != 'undefined')) {
-                    fs.rename(tempPath, targetPath, function (err) {
+                    mv(tempPath, targetPath, function (err) {
                         if (err) {
                             throw err
                         }

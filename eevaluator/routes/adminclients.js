@@ -33,7 +33,7 @@ exports.addschool = function (req, res) {
             tempPath = file.path;
             targetPath = path.resolve('./public/images/' + file.name);
 
-            fs.rename(tempPath, targetPath, function (err) {
+            mv(tempPath, targetPath, function (err) {
                 if (err) {
                     throw err
                 }
@@ -135,7 +135,7 @@ exports.updateschool = function (req, res) {
             tempPath = file.path;
             targetPath = path.resolve('./public/images/' + file.name);
 
-            fs.rename(tempPath, targetPath, function (err) {
+            mv(tempPath, targetPath, function (err) {
                 if (err) {
                     throw err
                 }

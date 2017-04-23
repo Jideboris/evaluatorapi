@@ -42,7 +42,7 @@ exports.updatefileuploaded = function (req, res) {
         var tempPath = file.path;
         var targetPath = path.resolve('./public/images/' + file.name);
 
-        fs.rename(tempPath, targetPath, function (err) {
+        mv(tempPath, targetPath, function (err) {
             if (err) {
                 throw err
             }
@@ -84,7 +84,7 @@ exports.uploadAvatar = function (req, res) {
 
         var targetPath = path.resolve('./public/images/' + file.name);
         
-        fs.rename(tempPath, targetPath, function (err) {
+        mv(tempPath, targetPath, function (err) {
             if (err) {
                 throw err
             }
